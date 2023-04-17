@@ -159,12 +159,14 @@ $(document).ready(function () {
             $.ajax({
                 type: "POST",
                 url: `home/add/${id}`,
-                success: function () {
+                success: function (res) {
                     Swal.fire(
                         'Done!',
                         `${productName} has been added to the cart`,
                         'success'
                     )
+
+                    $(".shop-cart a sup").text(res);
                 }
             });
         });
@@ -176,7 +178,7 @@ $(document).ready(function () {
     $(document).ready(function () {
         $(".delete").click(function () {
             let id = $(this).parent().parent().attr("data-id");
-            let productName = $(this).parent().prev().first().text();
+            let productName = $(this).parent().parent().children().eq(1).text();
             let product = $(this).parent().parent();
 
             $.ajax({

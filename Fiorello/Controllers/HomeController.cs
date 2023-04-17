@@ -5,17 +5,27 @@ using Fiorello.Data;
 using Microsoft.EntityFrameworkCore;
 using Fiorello.ViewModels;
 using Newtonsoft.Json;
+using Fiorello.Services;
+using Fiorello.Services.Interfaces;
 
 namespace Fiorello.Controllers;
 
 public class HomeController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly ILayoutService _layoutService;
+    private readonly ICartService _cartService;
 
-    public HomeController(AppDbContext context)
+    public HomeController(AppDbContext context,
+                          ILayoutService layoutService,
+                          ICartService cartService)
     {
         _context = context;
+        _layoutService = layoutService;
+        _cartService = cartService;
     }
+
+
 
     public async Task<IActionResult> Index()
     {
@@ -57,37 +67,14 @@ public class HomeController : Controller
 
         if (dbProduct is null) return NotFound();
 
-
-        List<CartVM> cart;
-
-        if (Request.Cookies["cart"] != null && Request.Cookies["cart"].Count() != 0)
-        {
-            cart = JsonConvert.DeserializeObject<List<CartVM>>(Request.Cookies["cart"]);
-        }
-
-        else
-        {
-            cart = new List<CartVM>();
-        }
+        List<CartVM> cart = _cartService.GetCartDatas();
 
         CartVM existedProduct = cart.FirstOrDefault(cv => cv.Id == dbProduct.Id);
 
-        if (existedProduct != null)
-        {
-            existedProduct.Count++;
-        }
+        _cartService.AddProductToCart(existedProduct, dbProduct, cart);
 
-        else
-        {
-            cart.Add(new CartVM
-            {
-                Id = dbProduct.Id,
-                Count = 1
-            });
-        }
+        int productsCount = cart.Sum(p => p.Count);
 
-        Response.Cookies.Append("cart", JsonConvert.SerializeObject(cart));
-
-        return Ok();
+        return Ok(productsCount);
     }
 }

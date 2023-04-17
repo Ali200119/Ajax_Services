@@ -101,6 +101,21 @@ namespace Fiorello.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Settings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SoftDelete = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Settings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SliderInfo",
                 columns: table => new
                 {
@@ -313,6 +328,16 @@ namespace Fiorello.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Settings",
+                columns: new[] { "Id", "Key", "SoftDelete", "Value" },
+                values: new object[,]
+                {
+                    { 1, "Header Logo", false, "logo.png" },
+                    { 2, "Phone", false, "994501248723" },
+                    { 3, "Email", false, "CodeAcademy@gmail.az" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "SliderInfo",
                 columns: new[] { "Id", "Description", "SignatureImage", "SoftDelete", "Title" },
                 values: new object[] { 1, "Where flowers are our inspiration to create lasting memories. Whatever the occasion, our flowers will make it special cursus a sit amet mauris.", "h2-sign-img.png", false, "<h1>Send <span>flowers</span> like</h1><h1>you mean it</h1>" });
@@ -452,6 +477,9 @@ namespace Fiorello.Migrations
 
             migrationBuilder.DropTable(
                 name: "Quotes");
+
+            migrationBuilder.DropTable(
+                name: "Settings");
 
             migrationBuilder.DropTable(
                 name: "SliderInfo");

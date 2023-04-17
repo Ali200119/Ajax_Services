@@ -825,6 +825,53 @@ namespace Fiorello.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Fiorello.Models.Setting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("SoftDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Settings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Key = "Header Logo",
+                            SoftDelete = false,
+                            Value = "logo.png"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Key = "Phone",
+                            SoftDelete = false,
+                            Value = "994501248723"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Key = "Email",
+                            SoftDelete = false,
+                            Value = "CodeAcademy@gmail.az"
+                        });
+                });
+
             modelBuilder.Entity("Fiorello.Models.Slider", b =>
                 {
                     b.Property<int>("Id")

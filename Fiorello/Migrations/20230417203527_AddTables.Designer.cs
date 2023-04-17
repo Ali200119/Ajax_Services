@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fiorello.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230417191906_AddTables")]
+    [Migration("20230417203527_AddTables")]
     partial class AddTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -824,6 +824,53 @@ namespace Fiorello.Migrations
                             Name = "Jasmine White",
                             Position = "Florist",
                             SoftDelete = false
+                        });
+                });
+
+            modelBuilder.Entity("Fiorello.Models.Setting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("SoftDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Settings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Key = "Header Logo",
+                            SoftDelete = false,
+                            Value = "logo.png"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Key = "Phone",
+                            SoftDelete = false,
+                            Value = "994501248723"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Key = "Email",
+                            SoftDelete = false,
+                            Value = "CodeAcademy@gmail.az"
                         });
                 });
 
