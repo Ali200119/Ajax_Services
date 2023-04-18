@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fiorello.Data;
 using Fiorello.Models;
+using Fiorello.Services.Interfaces;
 using Fiorello.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,33 +15,29 @@ namespace Fiorello.Controllers
     public class CartController : Controller
     {
         private readonly AppDbContext _context;
-        public CartController(AppDbContext context)
+        private readonly ICartService _cartService;
+        private readonly IProductService _productService;
+
+        public CartController(AppDbContext context,
+                              ICartService cartService,
+                              IProductService productService)
         {
             _context = context;
+            _cartService = cartService;
+            _productService = productService;
         }
 
 
         public async Task<IActionResult> Index()
         {
-            List<CartVM> cart;
-
-            if (Request.Cookies["cart"] != null && Request.Cookies["cart"].Count() != 0)
-            {
-                cart = JsonConvert.DeserializeObject<List<CartVM>>(Request.Cookies["cart"]);
-            }
-
-            else
-            {
-                cart = new List<CartVM>();
-            }
-
+            List<CartVM> cart = _cartService.GetCartDatas();
 
             List<CartDetailVM> cartDetails = new();
 
 
             foreach (var product in cart)
             {
-                Product dbProduct = await _context.Products.Where(p => !p.SoftDelete).Include(p => p.ProductImages).FirstOrDefaultAsync(p => p.Id == product.Id);
+                Product dbProduct = await _productService.GetFullDataById(product.Id);
                 cartDetails.Add(new CartDetailVM
                 {
                     Id = dbProduct.Id,
@@ -63,11 +60,7 @@ namespace Fiorello.Controllers
 
             if (dbProduct is null) return NotFound();
 
-            List<CartVM> cart = JsonConvert.DeserializeObject<List<CartVM>>(Request.Cookies["cart"]);
-
-            cart.Remove(cart.FirstOrDefault(cp => cp.Id == id));
-
-            Response.Cookies.Append("cart", JsonConvert.SerializeObject(cart));
+            _cartService.DeleteProductFromCart(id);
 
             return Ok();
         }
@@ -80,11 +73,7 @@ namespace Fiorello.Controllers
 
             if (dbProduct is null) return NotFound();
 
-            List<CartVM> cart = JsonConvert.DeserializeObject<List<CartVM>>(Request.Cookies["cart"]);
-
-            cart.FirstOrDefault(cp => cp.Id == id).Count++;
-
-            Response.Cookies.Append("cart", JsonConvert.SerializeObject(cart));
+            _cartService.IncreaseProductCount(id);
 
             return Ok();
         }
@@ -97,16 +86,7 @@ namespace Fiorello.Controllers
 
             if (dbProduct is null) return NotFound();
 
-            List<CartVM> cart = JsonConvert.DeserializeObject<List<CartVM>>(Request.Cookies["cart"]);
-
-            CartVM product = cart.FirstOrDefault(cp => cp.Id == id);
-
-            if (product.Count > 1)
-            {
-                product.Count--;
-            }
-
-            Response.Cookies.Append("cart", JsonConvert.SerializeObject(cart));
+            _cartService.DecreaseProductCount(id);
 
             return Ok();
         }

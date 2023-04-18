@@ -8,5 +8,8 @@ namespace Fiorello.Services.Interfaces
 	{
         List<CartVM> GetCartDatas();
         void AddProductToCart(CartVM existedProduct, Product product, List<CartVM> cart);
+        void DeleteProductFromCart(int? id);
+        void IncreaseProductCount(int? id);
+        void DecreaseProductCount(int? id);
     }
 }

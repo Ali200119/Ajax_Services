@@ -15,14 +15,17 @@ public class HomeController : Controller
     private readonly AppDbContext _context;
     private readonly ILayoutService _layoutService;
     private readonly ICartService _cartService;
+    private readonly IProductService _productService;
 
     public HomeController(AppDbContext context,
                           ILayoutService layoutService,
-                          ICartService cartService)
+                          ICartService cartService,
+                          IProductService productService)
     {
         _context = context;
         _layoutService = layoutService;
         _cartService = cartService;
+        _productService = productService;
     }
 
 
@@ -38,7 +41,7 @@ public class HomeController : Controller
         IEnumerable<Quote> quotes = await _context.Quotes.Where(q => !q.SoftDelete).ToListAsync();
         IEnumerable<Instagram> instagrams = await _context.Instagrams.Where(i => !i.SoftDelete).ToListAsync();
         IEnumerable<Category> categories = await _context.Categories.Where(c => !c.SoftDelete).ToListAsync();
-        IEnumerable<Product> products = await _context.Products.Where(p => !p.SoftDelete).Include(p => p.ProductImages).ToListAsync();
+        IEnumerable<Product> products = await _productService.GetAll();
 
 
         HomeVM homeVM = new HomeVM
@@ -63,7 +66,7 @@ public class HomeController : Controller
     public async Task<IActionResult> AddToCart(int? id)
     {
         if (id is null) return BadRequest();
-        Product dbProduct = await _context.Products.Where(p => !p.SoftDelete).Include(p => p.ProductImages).FirstOrDefaultAsync(p => p.Id == id);
+        Product dbProduct = await _productService.GetById(id);
 
         if (dbProduct is null) return NotFound();
 

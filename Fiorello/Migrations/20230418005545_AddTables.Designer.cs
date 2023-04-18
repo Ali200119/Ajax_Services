@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fiorello.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230417203527_AddTables")]
+    [Migration("20230418005545_AddTables")]
     partial class AddTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

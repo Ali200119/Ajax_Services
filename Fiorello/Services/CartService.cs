@@ -52,5 +52,37 @@ namespace Fiorello.Services
 
             _httpContextAccessor.HttpContext.Response.Cookies.Append("cart", JsonConvert.SerializeObject(cart));
         }
+
+        public void DeleteProductFromCart(int? id)
+        {
+            List<CartVM> cart = JsonConvert.DeserializeObject<List<CartVM>>(_httpContextAccessor.HttpContext.Request.Cookies["cart"]);
+
+            cart.Remove(cart.FirstOrDefault(cp => cp.Id == id));
+
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("cart", JsonConvert.SerializeObject(cart));
+        }
+
+        public void IncreaseProductCount(int? id)
+        {
+            List<CartVM> cart = JsonConvert.DeserializeObject<List<CartVM>>(_httpContextAccessor.HttpContext.Request.Cookies["cart"]);
+
+            cart.FirstOrDefault(cp => cp.Id == id).Count++;
+
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("cart", JsonConvert.SerializeObject(cart));
+        }
+
+        public void DecreaseProductCount(int? id)
+        {
+            List<CartVM> cart = JsonConvert.DeserializeObject<List<CartVM>>(_httpContextAccessor.HttpContext.Request.Cookies["cart"]);
+
+            CartVM product = cart.FirstOrDefault(cp => cp.Id == id);
+
+            if (product.Count > 1)
+            {
+                product.Count--;
+            }
+
+            _httpContextAccessor.HttpContext.Response.Cookies.Append("cart", JsonConvert.SerializeObject(cart));
+        }
     }
 }

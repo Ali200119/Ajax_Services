@@ -152,13 +152,16 @@ $(document).ready(function () {
 
     $(document).ready(function () {
         $(".add-to-cart").click(function () {
-            let id = $(this).parent().parent().attr("data-id");
+            let productId = $(this).parent().parent().attr("data-id");
 
             let productName = $(this).parent().prev().first().text();
 
+            let data = { id: productId };
+
             $.ajax({
                 type: "POST",
-                url: `home/add/${id}`,
+                url: `home/add`,
+                data: data,
                 success: function (res) {
                     Swal.fire(
                         'Done!',
@@ -177,13 +180,16 @@ $(document).ready(function () {
 
     $(document).ready(function () {
         $(".delete").click(function () {
-            let id = $(this).parent().parent().attr("data-id");
+            let productId = $(this).parent().parent().attr("data-id");
             let productName = $(this).parent().parent().children().eq(1).text();
             let product = $(this).parent().parent();
 
+            let data = { id: productId };
+
             $.ajax({
                 type: "POST",
-                url: `cart/delete/${id}`,
+                url: `cart/delete`,
+                data: data,
                 success: function () {
                     Swal.fire(
                         'Done!',
@@ -218,15 +224,18 @@ $(document).ready(function () {
 
     $(document).ready(function () {
         $(".plus").click(function () {
-            let id = $(this).parent().parent().attr("data-id");
+            let productId = $(this).parent().parent().attr("data-id");
             let currentCount = parseInt($(this).prev().text());
             let updatedCount = $(this).prev();
             let price = parseFloat($(this).parent().prev().children().eq(1).text());
             let totalPrice = $(this).parent().next().children().eq(1);
 
+            let data = { id: productId };
+
             $.ajax({
                 type: "POST",
-                url: `cart/increasecount/${id}`,
+                url: `cart/increasecount`,
+                data: data,
                 success: function () {
                     currentCount++;
                     updatedCount.text(currentCount);
@@ -250,15 +259,18 @@ $(document).ready(function () {
 
     $(document).ready(function () {
         $(".minus").click(function () {
-            let id = $(this).parent().parent().attr("data-id");
+            let productId = $(this).parent().parent().attr("data-id");
             let currentCount = parseInt($(this).next().text());
             let updatedCount = $(this).next();
             let price = parseFloat($(this).parent().prev().children().eq(1).text());
             let totalPrice = $(this).parent().next().children().eq(1);
 
+            let data = { id: productId };
+
             $.ajax({
                 type: "POST",
-                url: `cart/increasecount/${id}`,
+                url: `cart/decreasecount`,
+                data: data,
                 success: function () {
                     if (currentCount > 1) {
                         currentCount--;
